@@ -1,10 +1,10 @@
-## Projeto base para o evento Bootcamp Imersão AWS que irei realizar.
+## Projeto base para o evento Imersão AWS & IA que irei realizar.
 
-### Período do evento: 14 a 20 de Agosto/2023 (Online e ao Vivo às 20h)
+### Período do evento: 01/08 e 02/08/2026 (Online e ao Vivo das 9h30 às 17h30)
 
 [>> Página de Inscrição do evento](https://org.imersaoaws.com.br/github/readme)
 
 #### Para rodar as migrations no container ####
 ```
-docker-compose exec server bash -c 'npx sequelize db:migrate'
+docker compose exec server bash -c 'npx sequelize db:migrate'
 ```
