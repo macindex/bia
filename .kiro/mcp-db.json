@@ -14,7 +14,7 @@
     }
   }
 }
-// Source: https://github.com/crystaldba/postgres-mcp
+//Source: https://github.com/crystaldba/postgres-mcp
 // Roda como processo local, nao via docker run: container de MCP sobrevive
 // quando o cliente e morto (--rm so age se o container sair sozinho).
 // A porta 5433 e a que o compose.yml expoe no host (5433:5432).

@@ -1,19 +1,19 @@
 # Regras de Pipeline - Projeto BIA
 
 ## Definição de Pipeline
-Sempre que falarmos de pipeline para este projeto, estamos nos referindo à combinação de:
+Sempre que falarmos de **pipeline** para este projeto, estamos nos referindo à combinação de:
 - **AWS CodePipeline** (orquestração)
 - **AWS CodeBuild** (build e deploy)
 
 ## Arquitetura do Pipeline
 
 ### Componentes Principais
-- **Source Stage:** GitHub como repositório de código
-- **Build Stage:** CodeBuild para build da aplicação
-- **Deploy Stage:** Deploy automático para ECS
+1. **Source Stage:** GitHub como repositório de código
+2. **Build Stage:** CodeBuild para build da aplicação
+3. **Deploy Stage:** Deploy automático para ECS
 
 ### Configuração Base
-- **Buildspec:** Já configurado no arquivo buildspec.yml na raiz do projeto
+- **Buildspec:** Já configurado no arquivo `buildspec.yml` na raiz do projeto
 - **ECR:** Registry para armazenar imagens Docker
 - **ECS:** Target de deploy da aplicação
 
@@ -24,7 +24,7 @@ Sempre que falarmos de pipeline para este projeto, estamos nos referindo à comb
 - Webhook configurado para detectar mudanças
 
 ### 2. Build (CodeBuild)
-- Executa comandos definidos no buildspec.yml
+- Executa comandos definidos no `buildspec.yml`
 - Build da imagem Docker
 - Push da imagem para ECR
 

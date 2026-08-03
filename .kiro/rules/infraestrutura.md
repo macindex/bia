@@ -28,65 +28,65 @@
 ## Padrão de Nomenclatura
 
 ### Prefixo Padrão
-- **Prefixo:** bia (nome do projeto)
+- **Prefixo:** `bia` (nome do projeto)
 
 ### Nomenclatura de Recursos ECS
-- **Cluster com ALB:** cluster-bia-alb
-- **Cluster sem ALB:** cluster-bia
-- **Task Definition com ALB:** task-def-bia-alb (prefixo task-def e sufixo -alb)
-- **Task Definition sem ALB:** task-def-bia (prefixo task-def)
-- **Service:** service-bia (sem alb)
-- **Service:** service-bia-alb (com alb)
+- **Cluster com ALB:** `cluster-bia-alb`
+- **Cluster sem ALB:** `cluster-bia`
+- **Task Definition com ALB:** `task-def-bia-alb` (prefixo task-def e sufixo -alb)
+- **Task Definition sem ALB:** `task-def-bia` (prefixo task-def)
+- **Service:** `service-bia` (sem alb)
+- **Service:** `service-bia-alb` (com alb)
 
-## Configuração do Container (Task Definition)
+### Configuração do Container (Task Definition)
 - **Memory Soft Limit:** 400 MB
 - **CPU:** 1 vCPU (1024 units)
 - **Nota:** Configuração na área do container, NÃO na parte de Fargate/Task size
 
-## Estratégia de Deploy (ECS Service)
+### Estratégia de Deploy (ECS Service)
 - **Tipo:** Rolling Update
 - **Minimum healthy percent:** 50%
 - **Maximum percent:** 100%
 - **AZ Rebalancing:** Desativado
 
-## Target Group (ALB)
+### Target Group (ALB)
 - **Deregistration Delay:** 30 segundos
-- **Cenário 2 (com ALB):** tg-bia-alb — tipo instance
-- **Cenário 3 (com ALB + Cache):** tg-bia-app — tipo ip (necessário para awsvpc)
+- **Cenário 2 (com ALB):** `tg-bia-alb` — tipo instance
+- **Cenário 3 (com ALB + Cache):** `tg-bia-app` — tipo ip (necessário para awsvpc)
 
-## Sufixos dos Security Groups
+### Sufixos dos Security Groups
 
-### Cenário 1: Sem ALB (Inicial)
-- **Database (RDS):** bia-db
-- **EC2 (ECS Cluster):** bia-web
+#### Cenário 1: Sem ALB (Inicial)
+- **Database (RDS):** `bia-db`
+- **EC2 (ECS Cluster):** `bia-web`
 
-### Cenário 2: Com ALB (Evolução)
-- **Database (RDS):** bia-db
-- **Application Load Balancer:** bia-alb
-- **EC2 (ECS Cluster):** bia-ec2
+#### Cenário 2: Com ALB (Evolução)
+- **Database (RDS):** `bia-db`
+- **Application Load Balancer:** `bia-alb`
+- **EC2 (ECS Cluster):** `bia-ec2`
 
-### Cenário 3: Com ALB + Cache (Evolução com Cache)
-- **Database (RDS):** bia-db
-- **Application Load Balancer:** bia-alb
-- **EC2 (ECS Cluster):** bia-cluster
-- **Serviço da aplicação (ECS):** bia-app
-- **Serviço de cache (ECS):** bia-cache
+#### Cenário 3: Com ALB + Cache (Evolução com Cache)
+- **Database (RDS):** `bia-db`
+- **Application Load Balancer:** `bia-alb`
+- **EC2 (ECS Cluster):** `bia-cluster`
+- **Serviço da aplicação (ECS):** `bia-app`
+- **Serviço de cache (ECS):** `bia-cache`
 
 ## Nomenclatura de Serviços ECS (Cenário 3: Com ALB + Cache)
-- **Cluster:** cluster-bia-app
-- **Serviço da aplicação:** service-bia-app
-- **Serviço de cache:** service-bia-cache
+- **Cluster:** `cluster-bia-app`
+- **Serviço da aplicação:** `service-bia-app`
+- **Serviço de cache:** `service-bia-cache`
 
-## Network Mode (Cenário 3)
-- **Modo:** awsvpc — cada task recebe ENI própria com IP privado dedicado
+### Network Mode (Cenário 3)
+- **Modo:** `awsvpc` — cada task recebe ENI própria com IP privado dedicado
 - **Impacto:** Security Groups aplicados diretamente na ENI da task, não na EC2
 - **EC2 (bia-cluster):** inbound vazio — controle de acesso é feito nos SGs das tasks
 
-## Service Discovery — Cache (Cenário 3)
-- **Serviço:** service-bia-cache registrado no AWS Cloud Map
-- **Acesso:** service-bia-app resolve o endereço do cache via DNS interno (Cloud Map)
+### Service Discovery — Cache (Cenário 3)
+- **Serviço:** `service-bia-cache` registrado no AWS Cloud Map
+- **Acesso:** `service-bia-app` resolve o endereço do cache via DNS interno (Cloud Map)
 - **Benefício:** Sem necessidade de hardcodar IP do cache como variável de ambiente
-- **Alternativa possível:** Em vez de cache como serviço ECS, poderia ser utilizado o Amazon ElastiCache (Redis/Memcached gerenciado), que oferece alta disponibilidade e gerenciamento automático — porém é um estágio mais avançado do aprendizado
+- **Alternativa possível:** Em vez de cache como serviço ECS, poderia ser utilizado o **Amazon ElastiCache** (Redis/Memcached gerenciado), que oferece alta disponibilidade e gerenciamento automático — porém é um estágio mais avançado do aprendizado
 
 ## Regras de Security Groups
 
@@ -97,104 +97,104 @@
 
 ### Database (bia-db)
 **Inbound Rules:**
-- Porta: 5432 (PostgreSQL)
-- Sources:
-  - bia-dev → Descrição: "acesso vindo de bia-dev"
-  - bia-ec2 (quando com ALB) → Descrição: "acesso vindo de bia-ec2"
-  - bia-web (quando sem ALB) → Descrição: "acesso vindo de bia-web"
-  - bia-app (quando com ALB + Cache) → Descrição: "acesso vindo de bia-app"
+- **Porta:** 5432 (PostgreSQL)
+- **Sources:** 
+  - `bia-dev` → Descrição: "acesso vindo de bia-dev"
+  - `bia-ec2` (quando com ALB) → Descrição: "acesso vindo de bia-ec2"
+  - `bia-web` (quando sem ALB) → Descrição: "acesso vindo de bia-web"
+  - `bia-app` (quando com ALB + Cache) → Descrição: "acesso vindo de bia-app"
 
 ### EC2 com ALB (bia-ec2)
 **Inbound Rules:**
-- Protocolo: All TCP
-- Source: bia-alb → Descrição: "acesso vindo de bia-alb"
-- Motivo: Portas aleatórias do ECS Service
+- **Protocolo:** All TCP
+- **Source:** `bia-alb` → Descrição: "acesso vindo de bia-alb"
+- **Motivo:** Portas aleatórias do ECS Service
 
 ### EC2 com ALB + Cache (bia-cluster)
 **Inbound Rules:** nenhuma — controle de acesso feito nos SGs das tasks via awsvpc
-**Outbound:** 0.0.0.0/0
+**Outbound:** `0.0.0.0/0`
 
 ### Serviço da aplicação (bia-app) — Cenário 3
 **Inbound Rules:**
-- Porta: 8080
-- Source: bia-alb → Descrição: "acesso vindo de bia-alb"
+- **Porta:** 8080
+- **Source:** `bia-alb` → Descrição: "acesso vindo de bia-alb"
 
 ### Serviço de cache (bia-cache) — Cenário 3
 **Inbound Rules:**
-- Porta: 6379 (Redis)
-- Source: bia-app → Descrição: "acesso vindo de bia-app"
+- **Porta:** 6379 (Redis)
+- **Source:** `bia-app` → Descrição: "acesso vindo de bia-app"
 
 ### Application Load Balancer (bia-alb)
 **Inbound Rules:**
-- Porta: 80/443
-- Source: 0.0.0.0/0 → Descrição: "acesso público HTTP/HTTPS"
+- **Porta:** 80/443
+- **Source:** 0.0.0.0/0 → Descrição: "acesso público HTTP/HTTPS"
 
 ## EC2 de Desenvolvimento (bia-dev)
 
 ### Configuração da Instância
-- **Nome (Tag Name):** bia-dev
-- **Tipo:** t3.micro
+- **Nome (Tag Name):** `bia-dev`
+- **Tipo:** `t3.micro`
 - **AMI:** Amazon Linux 2023 (última versão disponível)
-- **Key Pair:** bia-dev
-- **Security Group:** bia-dev
-- **IAM Instance Profile:** role-acesso-ssm (obrigatório para acesso via SSM)
-- **Região:** us-east-1 (Virginia)
-- **Subnet:** zona A (us-east-1a)
+- **Key Pair:** `bia-dev`
+- **Security Group:** `bia-dev`
+- **IAM Instance Profile:** `role-acesso-ssm` (obrigatório para acesso via SSM)
+- **Região:** `us-east-1` (Virginia)
+- **Subnet:** zona A (`us-east-1a`)
 - **IP Público:** habilitado
 
 ### User Data
-- **Script:** scripts/user_data_ec2_zona_a.sh
-- O script instala:
+- **Script:** `scripts/user_data_ec2_zona_a.sh`
+- **O script instala:**
   - Docker + Docker Compose v2.23.3
   - Git, jq
   - AWS CLI v2
   - Node.js 24.x (LTS) + npm
   - Python 3.11 + uv (para MCP servers da AWS)
   - Swap de 4GB (128M × 32)
-  - Adiciona ec2-user e ssm-user ao grupo docker
+  - Adiciona `ec2-user` e `ssm-user` ao grupo `docker`
 
 ### Lançamento via AWS CLI (run-instances) — Regras Obrigatórias
 
-**IAM Instance Profile — sempre associar role-acesso-ssm**
-- Obrigatório para que o SSM Agent consiga registrar a instância e permitir ssm start-session
-- Parâmetro CLI: `--iam-instance-profile Name=role-acesso-ssm`
+#### IAM Instance Profile — sempre associar `role-acesso-ssm`
+- **Obrigatório** para que o SSM Agent consiga registrar a instância e permitir `ssm start-session`
+- **Parâmetro CLI:** `--iam-instance-profile Name=role-acesso-ssm`
 - Sem essa role, o comando `aws ssm start-session --target <id>` retorna erro de instância não encontrada
 
-**User Data — passar sempre em base64 inline**
-- A AWS CLI não aceita file:// para --user-data em ambientes restritos (ex: MCP/agentes)
-- Solução: Encodar o script em base64 e passar o conteúdo diretamente no parâmetro
-- Comando para gerar: `base64 -i scripts/user_data_ec2_zona_a.sh | tr -d '\n'`
+#### User Data — passar sempre em base64 inline
+- A AWS CLI **não aceita `file://`** para `--user-data` em ambientes restritos (ex: MCP/agentes)
+- **Solução:** Encodar o script em base64 e passar o conteúdo diretamente no parâmetro
+- **Comando para gerar:** `base64 -i scripts/user_data_ec2_zona_a.sh | tr -d '\n'`
 
-**Parâmetro de quantidade — usar --count, NÃO --min-count / --max-count**
-- O MCP/CLI deste projeto não aceita --min-count e --max-count
-- Correto: `--count 1`
-- Errado: `--min-count 1 --max-count 1` → causa erro de validação imediato
+#### Parâmetro de quantidade — usar `--count`, NÃO `--min-count` / `--max-count`
+- O MCP/CLI deste projeto **não aceita** `--min-count` e `--max-count`
+- **Correto:** `--count 1`
+- **Errado:** `--min-count 1 --max-count 1` → causa erro de validação imediato
 
-**IP público + Subnet — usar --network-interfaces, NÃO combinação direta**
-- Usar --associate-public-ip-address junto com --subnet-id e --security-group-ids causa erro InvalidParameterCombination
-- Solução obrigatória: Passar tudo pelo parâmetro --network-interfaces:
-```
---network-interfaces "DeviceIndex=0,SubnetId=<subnet-id>,Groups=<sg-id>,AssociatePublicIpAddress=true"
-```
-- Não usar --subnet-id, --security-group-ids ou --associate-public-ip-address como parâmetros separados quando quiser IP público
+#### IP público + Subnet — usar `--network-interfaces`, NÃO combinação direta
+- Usar `--associate-public-ip-address` junto com `--subnet-id` e `--security-group-ids` **causa erro** `InvalidParameterCombination`
+- **Solução obrigatória:** Passar tudo pelo parâmetro `--network-interfaces`:
+  ```
+  --network-interfaces "DeviceIndex=0,SubnetId=<subnet-id>,Groups=<sg-id>,AssociatePublicIpAddress=true"
+  ```
+- **Não usar** `--subnet-id`, `--security-group-ids` ou `--associate-public-ip-address` como parâmetros separados quando quiser IP público
 
-**AMI Amazon Linux 2023 — buscar via SSM Parameter Store**
-- Usar describe-images com filtros pode falhar ou ser lento
-- Método confiável e rápido:
-```bash
-aws ssm get-parameter \
-  --region us-east-1 \
-  --name "/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64" \
-  --query "Parameter.Value"
-```
+#### AMI Amazon Linux 2023 — buscar via SSM Parameter Store
+- Usar `describe-images` com filtros pode falhar ou ser lento
+- **Método confiável e rápido:**
+  ```
+  aws ssm get-parameter \
+    --region us-east-1 \
+    --name "/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64" \
+    --query "Parameter.Value"
+  ```
 - Sempre retorna a AMI mais recente disponível na região sem depender de filtros
 
 ## Banco de Dados
 - **Aproveitamento:** Usar banco existente na infraestrutura
 - **Não criar:** Novos recursos RDS nos templates
-- **Security Group:** Manter bia-db preparado para conexão
+- **Security Group:** Manter `bia-db` preparado para conexão
 
-## Observações
+### Observações
 - As regras seguem o princípio de menor privilégio
 - Security Groups referenciam outros Security Groups para maior flexibilidade
 - Configuração permite evolução da arquitetura sem grandes mudanças
